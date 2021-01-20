@@ -1,0 +1,29 @@
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../assets/fonts/Montserrat-Regular.ttf');
+}
+
+@import 'variables';
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+.node {
+  display: grid;
+  grid-template-rows: 40px 40px;
+  text-align: center;
+  grid-row: 1;
+  outline: 1px solid;
+}
+
+.children {
+  display: grid;
+  grid-template-rows: 40px;
+  grid-row: 2;
+  grid-auto-columns: 1fr;
+  
+}

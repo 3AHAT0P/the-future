@@ -1,0 +1,147 @@
+/* eslint-disable import/no-extraneous-dependencies */
+const webpack = require('webpack');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+const paths = require('./paths');
+
+const buildEntry = (moduleName) => ({ [moduleName]: `${paths.src}/${moduleName}/index.ts` });
+
+const cleanOnceBeforeBuildPatternsMap = {
+  ui: ['!service-worker.js', '!main.*.js'],
+  api: ['service-worker.js'],
+  main: ['!main.*.js'],
+};
+
+const buildPlugins = (moduleName) => {
+  const plugins = [
+    new webpack.ProgressPlugin(),
+    new CleanWebpackPlugin({
+      cleanOnceBeforeBuildPatterns: cleanOnceBeforeBuildPatternsMap[moduleName],
+    }),
+    new HtmlWebpackPlugin({
+      title: 'Treee',
+      favicon: `${paths.src}/ui/assets/images/favicon.png`,
+      // template file
+      // шаблон
+      template: `${paths.src}/ui/template.html`,
+      filename: 'index.html', // output file
+
+      inject: false,
+      templateContent: ({ htmlWebpackPlugin }) => {
+        console.log('!!!!!!!!!!!', htmlWebpackPlugin.tags.bodyTags);
+        return htmlWebpackPlugin.tags.bodyTags.toString();
+      }
+    }),
+  ];
+
+  // if (moduleName === 'main') {
+  //   plugins.push(
+  //     new HtmlWebpackPlugin({
+  //       filename: `${moduleName}.txt`,
+  //       inject: false,
+  //       templateContent: ({ htmlWebpackPlugin }) => {
+  //         return htmlWebpackPlugin.tags.bodyTags[1].attributes.src;
+  //       }
+  //     }),
+  //   );
+  // }
+
+  if (moduleName === 'ui') {
+    // Customize the webpack build process
+    // Настройки
+    plugins.push(
+      // Copies files from target to destination folder
+      // Копирование статических файлов
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: paths.public,
+            to: 'assets',
+            globOptions: {
+              ignore: ['*.DS_Store'],
+            },
+          },
+        ],
+      }),
+
+      // Generates an HTML file from a template
+      // Создание HTML-файла на основе шаблона
+      // new HtmlWebpackPlugin({
+      //   title: 'Treee',
+      //   favicon: `${paths.src}/ui/assets/images/favicon.png`,
+      //   // template file
+      //   // шаблон
+      //   template: `${paths.src}/ui/template.html`,
+      //   filename: 'index.html', // output file
+      // }),
+    );
+  }
+  return plugins;
+};
+
+const buildWebpackModules = (moduleName) => {
+  const webpackModules = {
+    rules: [
+      {
+        test: /\.(ts)$/,
+        include: [paths.src],
+        loader: 'ts-loader',
+      },
+    ],
+  };
+
+  if (moduleName === 'ui') {
+    webpackModules.rules.push(
+      // Styles: Inject CSS into the head with source maps
+      // Стили: встроить CSS в head с картами источников
+      {
+        test: /\.(scss|css)$/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: { sourceMap: true, importLoaders: 1 },
+          },
+          { loader: 'postcss-loader', options: { sourceMap: true } },
+          { loader: 'sass-loader', options: { sourceMap: true } },
+        ],
+      },
+
+      // Images: Copy image files to build folder
+      // Изображения: копировать файлы в директорию для файлов сборки
+      { test: /\.(?:ico|gif|png|jpg|jpeg)$/i, type: 'asset/resource' },
+
+      // Fonts and SVGs: Inline files
+      // Шрифты и SVG
+      { test: /\.(woff(2)?|eot|ttf|otf|svg|)$/, type: 'asset/inline' },
+    );
+  }
+  return webpackModules;
+};
+
+const modules = ['ui', 'service-worker', 'main'];
+
+
+module.exports = modules.map((moduleName) => ({
+  entry: buildEntry(moduleName),
+  output: {
+    path: paths.build,
+    filename({ chunk }) {
+      return '[name].bundle.js';
+    },
+    publicPath: './',
+  },
+  plugins: buildPlugins(moduleName),
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+    alias: {
+      '@/ui': `${paths.src}/ui/`,
+      '@/api': `${paths.src}/service-worker/api/`,
+      '@/main': `${paths.src}/main/`,
+      '@/common': `${paths.src}/common/`,
+    },
+  },
+  module: buildWebpackModules(moduleName),
+}));
