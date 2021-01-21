@@ -1,80 +1,18 @@
-import TreeNode from './tree/node';
-import TreeHTMLRenderer from './tree/renderers/html';
-import { f, x } from './test';
+import App from './app';
 
 import './styles/index.scss';
 
-// const node = new TreeNode();
-// node
-//   .addChild(
-//     new TreeNode(),
-//   )
-//   .addChild(
-//     new TreeNode()
-//       .addChild(
-//         new TreeNode(),
-//       )
-//       .addChild(
-//         new TreeNode()
-//           .addChild(
-//             new TreeNode(),
-//           )
-//           .addChild(
-//             new TreeNode(),
-//           ),
-//       ),
-//     )
-//     .addChild(
-//       new TreeNode()
-//       .addChild(
-//         new TreeNode()
-//           .addChild(
-//             new TreeNode(),
-//           )
-//           .addChild(
-//             new TreeNode()
-//               .addChild(
-//                 new TreeNode(),
-//               ),
-//           )
-//           .addChild(
-//             new TreeNode()
-//               .addChild(
-//                 new TreeNode(),
-//               ),
-//           )
-//           .addChild(
-//             new TreeNode(),
-//           )
-//         ),
-//     )
-//     .addChild(
-//       new TreeNode()
-//         .addChild(
-//           new TreeNode()
-//             .addChild(
-//               new TreeNode(),
-//             ).addChild(
-//               new TreeNode(),
-//             ),
-//         )
-//         .addChild(
-//           new TreeNode(),
-//         ),
-//     )
-//     .addChild(
-//       new TreeNode(),
-//     );
+const render = (rootElementOrSelector: HTMLElement | string, tree: JSX.Element) => {
+  let rootElement;
+  if (typeof rootElementOrSelector === 'string') {
+    const element = document.querySelector(rootElementOrSelector);
+    if (element == null) throw new Error('Invalid selector');
+    rootElement = element;
+  } else rootElement = rootElementOrSelector;
+  rootElement.append(tree.render());
+}
 
-// document.body.append(nodeRenderToHTML(node));
-
-// const treeHTMLRenderer = new TreeHTMLRenderer({ rootElement: document.body, tree: node });
-// treeHTMLRenderer.render();
-
-const treeHTMLRenderer = new TreeHTMLRenderer({ rootElement: document.body, tree: x() as TreeNode });
-treeHTMLRenderer.render();
-
-console.log('Hi', f() );
+render('#root', App());
 
 // @ts-ignore
 new Worker(window.__meta_main_path);

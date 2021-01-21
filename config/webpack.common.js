@@ -3,32 +3,19 @@ const webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const fs = require('fs');
 
 const paths = require('./paths');
 
-const buildIndexHTML = (headTags, bodyTags, options, swSourceFilepath, mainSourceFilepath) => (
-`<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    ${headTags}
-    <title>
-      ${options.title}
-    </title>
-  </head>
-
-  <body>
-    <div id="root">
-      <!-- Instead ../public/images/example.png -->
-      <!-- Вместо ../public/images/example.png -->
-      <img src="./assets/images/example.png" />
-      <script>window.__meta_sw_path = '${swSourceFilepath}'; window.__meta_main_path = '${mainSourceFilepath}';</script>
-      ${bodyTags}
-    </div>
-  </body>
-</html>`);
+const buildIndexHTML = (headTags, bodyTags, options, swSourceFilepath, mainSourceFilepath) => {
+  const html = fs.readFileSync(`${paths.src}/ui/template.html`);
+  return html.toString()
+    .replace('<%= headTags %>', headTags)
+    .replace('<%= htmlWebpackPlugin.options.title %>', options.title)
+    .replace('<%= swSourceFilepath %>', swSourceFilepath)
+    .replace('<%= mainSourceFilepath %>', mainSourceFilepath)
+    .replace('<%= bodyTags %>', bodyTags);
+};
 
 module.exports = {
   entry: {
@@ -97,6 +84,7 @@ module.exports = {
       '@/api': `${paths.src}/service-worker/api/`,
       '@/main': `${paths.src}/main/`,
       '@/common': `${paths.src}/common/`,
+      "VirtualTree": `${paths.src}/ui/VirtualTree`,
     },
   },
   module: {

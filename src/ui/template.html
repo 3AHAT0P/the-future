@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <%= headTags %>
     <title>
       <%= htmlWebpackPlugin.options.title %>
     </title>
@@ -14,8 +14,12 @@
     <div id="root">
       <!-- Instead ../public/images/example.png -->
       <!-- Вместо ../public/images/example.png -->
-      <img src="./assets/images/example.png" />
+      <!-- <img src="./assets/images/example.png" /> -->
+      <script>
+        window.__meta_sw_path = '<%= swSourceFilepath %>';
+        window.__meta_main_path = '<%= mainSourceFilepath %>';
+      </script>
+      <%= bodyTags %>
     </div>
   </body>
-
 </html>

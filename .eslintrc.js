@@ -21,6 +21,7 @@ module.exports = {
           ['@/common', './src/common/'],
           ['@/main', './src/main/'],
           ['@/ui', './src/ui/'],
+          ["VirtualTree", "src/ui/VirtualTree"],
         ],
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
       },
