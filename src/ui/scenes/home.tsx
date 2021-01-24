@@ -1,10 +1,11 @@
-import { Props, HTMLTreeNode } from 'VirtualTree';
+/* eslint-disable max-classes-per-file */
+import { Component } from 'VirtualTree';
 
-class MyBlockAtom extends HTMLTreeNode<Props> {
+class MyBlockAtom extends Component {
   render() {
     const element = document.createElement('div');
     element.className = 'node';
-    element.append(this.id.toString());
+    element.append(this.id);
 
     const elementChildrenContainer = document.createElement('div');
     elementChildrenContainer.className = 'children';
@@ -17,37 +18,46 @@ class MyBlockAtom extends HTMLTreeNode<Props> {
   }
 }
 
-let index = 0;
+export default class HomeScreen extends Component {
+  private _index = 0;
 
-export default () => (
-  <MyBlockAtom id={index++}>
-    <MyBlockAtom id={index++}></MyBlockAtom>
-    <MyBlockAtom id={index++}>
-      <MyBlockAtom id={index++}></MyBlockAtom>
-      <MyBlockAtom id={index++}>
-        <MyBlockAtom id={index++}></MyBlockAtom>
-        <MyBlockAtom id={index++}></MyBlockAtom>
-      </MyBlockAtom>
-    </MyBlockAtom>
-    <MyBlockAtom id={index++}>
-      <MyBlockAtom id={index++}>
-        <MyBlockAtom id={index++}></MyBlockAtom>
-        <MyBlockAtom id={index++}>
-          <MyBlockAtom id={index++}></MyBlockAtom>
+  private getIndex() {
+    this._index += 1;
+    return this._index.toString();
+  }
+
+  public render() {
+    return (
+      <MyBlockAtom id={this.getIndex()}>
+        <MyBlockAtom id={this.getIndex()}></MyBlockAtom>
+        <MyBlockAtom id={this.getIndex()}>
+          <MyBlockAtom id={this.getIndex()}></MyBlockAtom>
+          <MyBlockAtom id={this.getIndex()}>
+            <MyBlockAtom id={this.getIndex()}></MyBlockAtom>
+            <MyBlockAtom id={this.getIndex()}></MyBlockAtom>
+          </MyBlockAtom>
         </MyBlockAtom>
-        <MyBlockAtom id={index++}>
-          <MyBlockAtom id={index++}></MyBlockAtom>
+        <MyBlockAtom id={this.getIndex()}>
+          <MyBlockAtom id={this.getIndex()}>
+            <MyBlockAtom id={this.getIndex()}></MyBlockAtom>
+            <MyBlockAtom id={this.getIndex()}>
+              <MyBlockAtom id={this.getIndex()}></MyBlockAtom>
+            </MyBlockAtom>
+            <MyBlockAtom id={this.getIndex()}>
+              <MyBlockAtom id={this.getIndex()}></MyBlockAtom>
+            </MyBlockAtom>
+            <MyBlockAtom id={this.getIndex()}></MyBlockAtom>
+          </MyBlockAtom>
         </MyBlockAtom>
-        <MyBlockAtom id={index++}></MyBlockAtom>
+        <MyBlockAtom id={this.getIndex()}>
+          <MyBlockAtom id={this.getIndex()}>
+            <MyBlockAtom id={this.getIndex()}></MyBlockAtom>
+            <MyBlockAtom id={this.getIndex()}></MyBlockAtom>
+          </MyBlockAtom>
+          <MyBlockAtom id={this.getIndex()}></MyBlockAtom>
+        </MyBlockAtom>
+        <MyBlockAtom id={this.getIndex()}></MyBlockAtom>
       </MyBlockAtom>
-    </MyBlockAtom>
-    <MyBlockAtom id={index++}>
-      <MyBlockAtom id={index++}>
-        <MyBlockAtom id={index++}></MyBlockAtom>
-        <MyBlockAtom id={index++}></MyBlockAtom>
-      </MyBlockAtom>
-      <MyBlockAtom id={index++}></MyBlockAtom>
-    </MyBlockAtom>
-    <MyBlockAtom id={index++}></MyBlockAtom>
-  </MyBlockAtom>
-)
+    );
+  }
+}

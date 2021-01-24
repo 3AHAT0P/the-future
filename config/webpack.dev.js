@@ -19,7 +19,7 @@ module.exports = merge(common, {
   devServer: {
     historyApiFallback: true,
     contentBase: paths.build,
-    open: true,
+    // open: true,
     compress: true,
     hot: true,
     port: 8080,

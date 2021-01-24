@@ -1,4 +1,4 @@
-import './jsx.d.ts';
+import './jsx.d';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

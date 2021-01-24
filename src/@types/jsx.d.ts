@@ -1,20 +1,21 @@
+/* eslint-disable max-classes-per-file */
+declare namespace VirtualTree {
+  type RenderType = HTMLElement;
 
+  // eslint-disable-next-line no-use-before-define
+  type Element = Component | RenderType;
 
-declare module VirtualTree {
   interface Props {
-    id?: number;
+    id?: string;
+    children?: Element[] | Element;
   }
 
-  abstract class TreeNode<TProps extends Props = Props, TRenderReturn = void> {
-    // protected _id: number;
-    // protected _parent: this | null;
-    // protected _children: this[];
-
+  abstract class TreeNode {
     public get id(): number;
-    public get parent(): this | null;
-    public get children(): this[];
 
-    // constructor(props: TProps);
+    public get parent(): this | null;
+
+    public get children(): this[];
 
     detach(from: 'removeChild' | 'attach' | null = null): this;
 
@@ -23,19 +24,29 @@ declare module VirtualTree {
     addChild(childNode: this, from: 'removeChild' | 'attach' | null = null): this;
 
     removeChild(childNode: this, from: 'detach' | null = null): this;
-
-    render(): TRenderReturn;
   }
 
+  abstract class Component<TProps extends Props = Props> extends TreeNode {
+    public get id(): string;
 
-  abstract class HTMLTreeNode<TProps extends Props = Props> extends TreeNode<TProps, HTMLElement> { }
+    public get children(): Component[];
+
+    applyProps(props: TProps): void;
+
+    render(): Element;
+  }
+
+  interface FunctionalComponent<TProps extends Props = Props> {
+    (props: TProps): Element;
+  }
 }
 
-declare module JSX {
-  type Element = VirtualTree.HTMLTreeNode;
-  type ElementClass = VirtualTree.HTMLTreeNode;
-  // interface ElementAttributesProperty { props: {}; }
-  // interface ElementChildrenAttribute { children: {}; }
+declare namespace JSX {
+  type Element = VirtualTree.Element;
+  type ElementClass = VirtualTree.Component;
+  interface ElementAttributesProperty { props: Props; }
+  interface ElementChildrenAttribute { children: JSX.Element[] | JSX.Element; }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface IntrinsicElements { }
 }

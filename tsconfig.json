@@ -19,7 +19,9 @@
     "jsx": "react-jsx",                     /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
     // "jsxFactory": "createElement",
     // "jsxFragmentFactory": "createFragment",
-    "jsxImportSource": "@/ui/jsx",
+    // "reactNamespace": "JSX",
+    // "jsxImportSource": "JSX",
+    "jsxImportSource": "@/common/JSX",
     // "declaration": true,                   /* Generates corresponding '.d.ts' file. */
     // "declarationMap": true,                /* Generates a sourcemap for each corresponding '.d.ts' file. */
     // "sourceMap": true,                     /* Generates corresponding '.map' file. */
@@ -57,7 +59,8 @@
       "@/*": [
         "src/*"
       ],
-      "VirtualTree": ["src/ui/VirtualTree"]
+      "JSX": ["src/common/JSX"],
+      "VirtualTree": ["src/common/VirtualTree"]
     },                                        /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
     // "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
     "types": [],                              /* Type declaration files to be included in compilation. */

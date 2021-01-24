@@ -84,7 +84,8 @@ module.exports = {
       '@/api': `${paths.src}/service-worker/api/`,
       '@/main': `${paths.src}/main/`,
       '@/common': `${paths.src}/common/`,
-      "VirtualTree": `${paths.src}/ui/VirtualTree`,
+      JSX: `${paths.src}/common/JSX`,
+      VirtualTree: `${paths.src}/common/VirtualTree`,
     },
   },
   module: {
