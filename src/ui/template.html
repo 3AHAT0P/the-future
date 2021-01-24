@@ -11,15 +11,14 @@
   </head>
 
   <body>
-    <div id="root">
-      <!-- Instead ../public/images/example.png -->
-      <!-- Вместо ../public/images/example.png -->
-      <!-- <img src="./assets/images/example.png" /> -->
-      <script>
-        window.__meta_sw_path = '<%= swSourceFilepath %>';
-        window.__meta_main_path = '<%= mainSourceFilepath %>';
-      </script>
-      <%= bodyTags %>
-    </div>
+    <canvas id="root" style="width: 100%; height: 100%;"></canvas>
+    <!-- Instead ../public/images/example.png -->
+    <!-- Вместо ../public/images/example.png -->
+    <!-- <img src="./assets/images/example.png" /> -->
+    <script>
+      window.__meta_sw_path = '<%= swSourceFilepath %>';
+      window.__meta_main_path = '<%= mainSourceFilepath %>';
+    </script>
+    <%= bodyTags %>
   </body>
 </html>

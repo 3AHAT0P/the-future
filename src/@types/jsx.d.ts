@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
 declare namespace VirtualTree {
-  type RenderType = HTMLElement;
+  type RenderType = CanvasImageSource | void;
 
   // eslint-disable-next-line no-use-before-define
   type Element = Component | RenderType;
@@ -33,7 +33,7 @@ declare namespace VirtualTree {
 
     applyProps(props: TProps): void;
 
-    render(): Element;
+    render(ctx: CanvasRenderingContext2D): Element;
   }
 
   interface FunctionalComponent<TProps extends Props = Props> {

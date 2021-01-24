@@ -1,20 +1,19 @@
-import { Component, isComponentConstructor } from 'VirtualTree';
+import { Component } from 'VirtualTree';
 import App from './app';
 
 import './styles/index.scss';
 
-const render = (rootElementOrSelector: HTMLElement | string, Tree: Constructor<Component>) => {
-  let rootElement;
+const render = (rootElementOrSelector: HTMLCanvasElement | string, Tree: typeof App) => {
+  let rootElement: HTMLCanvasElement;
   if (typeof rootElementOrSelector === 'string') {
     const element = document.querySelector(rootElementOrSelector);
-    if (element == null) throw new Error('Invalid selector');
+    if (element == null || !(element instanceof HTMLCanvasElement)) throw new Error('Invalid selector');
     rootElement = element;
   } else rootElement = rootElementOrSelector;
-  if (isComponentConstructor(Tree)) {
-    const tree: any = Tree.create({});
-    if (tree instanceof HTMLElement) rootElement.append(tree);
-    else rootElement.append(tree._render());
-  }
+  rootElement.setAttribute('width', rootElement.clientWidth.toString());
+  rootElement.setAttribute('height', rootElement.clientHeight.toString());
+  const tree = Tree.create({ canvas: rootElement });
+  tree._render();
 };
 
 render('#root', App);

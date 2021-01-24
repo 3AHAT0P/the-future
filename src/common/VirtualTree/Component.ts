@@ -1,8 +1,10 @@
 import TreeNode from './TreeNode';
 
 export default class Component<TProps extends VirtualTree.Props = VirtualTree.Props> extends TreeNode {
-  public static create<GProps extends VirtualTree.Props = VirtualTree.Props>(props: GProps) {
-    const instance = new this<GProps>();
+  public static create<
+    GProps extends VirtualTree.Props = VirtualTree.Props,
+    >(props: GProps) {
+    const instance = new this();
     instance.applyProps(props);
     return instance;
   }
@@ -16,15 +18,17 @@ export default class Component<TProps extends VirtualTree.Props = VirtualTree.Pr
     if (props.id != null) this._id = props.id;
   }
 
-  public _render(): VirtualTree.RenderType {
-    const renderResult = this.render();
-    if (renderResult instanceof Component) return renderResult._render();
+  public _render(ctx: CanvasRenderingContext2D): VirtualTree.RenderType {
+    const renderResult = this.render(ctx);
+    if (renderResult instanceof Component) return renderResult._render(ctx);
+    if (renderResult == null) return void 0;
 
-    return renderResult as VirtualTree.RenderType;
+    // TODO: ??????
+    ctx.drawImage(renderResult as CanvasImageSource, 0, 0);
   }
 
-  public render(): VirtualTree.Element {
-    return document.createElement('div');
+  public render(ctx: CanvasRenderingContext2D): VirtualTree.Element {
+
   }
 }
 
