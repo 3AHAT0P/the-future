@@ -16,19 +16,115 @@ export default class Component<TProps extends VirtualTree.Props = VirtualTree.Pr
   public applyProps(props: TProps): void {
     this._props = props;
     if (props.id != null) this._id = props.id;
+    if (props.children != null) {
+      console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', this, props.children);
+      // if (Array.isArray(props.children)) {
+      //   props.children.forEach((child: this) => this.addChild(child));
+      // }
+    }
   }
 
-  public _render(ctx: CanvasRenderingContext2D): VirtualTree.RenderType {
+  // public _mount(ctx: CanvasRenderingContext2D): void {
+  //   const renderResult = this.render(ctx);
+
+  //   if (renderResult == null) return;
+
+  //   if (renderResult instanceof Component) {
+  //     renderResult._mount(ctx);
+  //     return;
+  //   }
+
+  //   // Logic for work with Fragment.
+  //   if (Array.isArray(renderResult)) {
+  //     for (const child of renderResult) {
+  //       this.addChild(child);
+  //       if (child instanceof Component) child._mount(ctx);
+  //       // TODO: ??????
+  //       else ctx.drawImage(child as CanvasImageSource, 0, 0);
+  //     }
+  //     return;
+  //   }
+
+  //   // TODO: ??????
+  //   ctx.drawImage(renderResult as CanvasImageSource, 0, 0);
+  // }
+
+  public beforeMount(): void {
+    // noop
+  }
+
+  public _mount(ctx: CanvasRenderingContext2D): void {
+    this.beforeMount();
+
     const renderResult = this.render(ctx);
-    if (renderResult instanceof Component) return renderResult._render(ctx);
-    if (renderResult == null) return void 0;
+
+    if (renderResult == null) return;
+
+    if ('Factory' in renderResult) {
+      const child = renderResult.Factory.create(renderResult.props) as unknown as this;
+      this.addChild(child);
+      child._mount(ctx);
+      return;
+    }
+
+    if (Array.isArray(renderResult)) {
+      for (const meta of renderResult) {
+        const child = meta.Factory.create(meta.props) as unknown as this;
+        this.addChild(child);
+        child._mount(ctx);
+      }
+      return;
+    }
 
     // TODO: ??????
     ctx.drawImage(renderResult as CanvasImageSource, 0, 0);
   }
 
-  public render(ctx: CanvasRenderingContext2D): VirtualTree.Element {
+  public _update(ctx: CanvasRenderingContext2D): void {
+    const renderResult = this.render(ctx);
 
+    if (renderResult == null) return;
+
+    if ('Factory' in renderResult) {
+      if (this.children.length === 1 && this.children[0] instanceof renderResult.Factory) {
+        this.children[0].applyProps(renderResult.props as unknown as TProps);
+        this.children[0]._update(ctx);
+      } else {
+        this.removeAllChildren();
+        const child = renderResult.Factory.create(renderResult.props) as unknown as this;
+        this.addChild(child);
+        child._mount(ctx);
+      }
+      return;
+    }
+
+    if (Array.isArray(renderResult)) {
+      for (let index = 0; index < renderResult.length; index += 1) {
+        const meta = renderResult[index];
+        const _child = this._children[index];
+
+        if (_child != null && _child instanceof meta.Factory) {
+          _child.applyProps(meta.props as unknown as TProps);
+          _child._update(ctx);
+        } else {
+          const child = meta.Factory.create(meta.props) as unknown as this;
+          this.addChildAfter(_child, child);
+          this.removeChild(_child);
+          child._mount(ctx);
+        }
+      }
+      if (this._children.length > renderResult.length) {
+        this._children = this._children.slice(0, renderResult.length);
+      }
+      return;
+    }
+
+    // TODO: ??????
+    ctx.drawImage(renderResult as CanvasImageSource, 0, 0);
+  }
+
+  public render(ctx: CanvasRenderingContext2D): VirtualTree.ElementMeta | VirtualTree.RenderType {
+  // noop
   }
 }
 

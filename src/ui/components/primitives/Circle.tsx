@@ -1,28 +1,26 @@
 import { Component } from 'VirtualTree';
 
-interface RectanglePrimitiveProps extends VirtualTree.Props {
-  width: number;
-  height: number;
+interface CirclePrimitiveProps extends VirtualTree.Props {
+  radius: number;
 
-  leftBottom: Point;
+  center: Point;
 
   fillColor?: string | CanvasGradient | CanvasPattern;
   strokeColor?: string | CanvasGradient | CanvasPattern;
 }
 
-export default class RectanglePrimitive extends Component<RectanglePrimitiveProps> {
-  // public applyProps(props: RectanglePrimitiveProps): void {
+export default class CirclePrimitive extends Component<CirclePrimitiveProps> {
+  // public applyProps(props: CirclePrimitiveProps): void {
   // }
 
   render(ctx: CanvasRenderingContext2D) {
     const {
-      width, height, leftBottom, fillColor, strokeColor,
+      center, radius, fillColor, strokeColor,
     } = this.props;
     ctx.save();
 
     ctx.beginPath();
-
-    ctx.rect(leftBottom.x, ctx.canvas.height - (height + leftBottom.y), width, height);
+    ctx.arc(center.x, ctx.canvas.height - center.y, radius, 0, 2 * Math.PI);
 
     if (strokeColor != null) {
       ctx.strokeStyle = strokeColor;

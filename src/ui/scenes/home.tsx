@@ -1,25 +1,18 @@
-/* eslint-disable max-classes-per-file */
 import { Component } from 'VirtualTree';
-import RectanglePrimitive from '../components/primitives/Rectangle';
-
-class MyBlockAtom extends Component {
-  render(ctx: CanvasRenderingContext2D) {
-    ctx.strokeRect(10, 10, 100, 100);
-  }
-}
+import Bird from '../components/Bird';
 
 export default class HomeScreen extends Component {
-  private _index = 0;
+  private _birdPosition: Point = { x: 100, y: 100 };
 
-  private getIndex() {
-    this._index += 1;
-    return this._index.toString();
-  }
+  private _rotationAngle = 0;
 
-  public render() {
-    return (
-      <RectanglePrimitive width={100} height={100} left={100} bottom={100} strokeColor='hsla(0, 50%, 50%, 1)'>
-      </RectanglePrimitive>
-    );
+  public render(ctx: CanvasRenderingContext2D) {
+    if (
+      (this._birdPosition.y + 150 >= ctx.canvas.height && this._rotationAngle % 360 < 180)
+      || (this._birdPosition.y <= 0 && this._rotationAngle % 360 >= 180)
+    ) this._rotationAngle += 5;
+    else this._birdPosition.y += this._rotationAngle % 360 < 180 ? 5 : -5;
+
+    return <Bird position={this._birdPosition} rotationAngle={this._rotationAngle} />;
   }
 }

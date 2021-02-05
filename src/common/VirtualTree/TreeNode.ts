@@ -35,6 +35,14 @@ export default class TreeNode {
     return this;
   }
 
+  public addChildAfter(prevChildNode: this, childNode: this, from: 'removeChild' | 'attach' | null = null): this {
+    const index = this._children.indexOf(prevChildNode);
+    if (index === -1) throw new Error('Incorrect prevChildNode');
+    this._children.splice(index, 0, childNode);
+
+    return this;
+  }
+
   public removeChild(childNode: this, from: 'detach' | null = null): this {
     if (from !== 'detach') childNode.detach('removeChild');
     const children = [];
@@ -42,6 +50,13 @@ export default class TreeNode {
       if (child !== childNode) children.push(child);
     }
     this._children = children;
+    return this;
+  }
+
+  public removeAllChildren(): this {
+    for (const child of this._children) child.detach('removeChild');
+
+    this._children = [];
     return this;
   }
 }

@@ -23,10 +23,19 @@ export default class App extends Component<AppProps> {
     this._ctx = props.canvas.getContext('2d');
   }
 
-  public _render() {
+  public _mount() {
     if (this._ctx == null) throw new Error('Context is incorrect!');
 
-    return super._render(this._ctx);
+    super._mount(this._ctx);
+  }
+
+  public _update() {
+    if (this._canvas == null) throw new Error('Canvas is incorrect!');
+    if (this._ctx == null) throw new Error('Context is incorrect!');
+
+    this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+
+    super._update(this._ctx);
   }
 
   public render() {

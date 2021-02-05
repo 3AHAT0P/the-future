@@ -1,28 +1,31 @@
 import { Component } from 'VirtualTree';
 
-interface RectanglePrimitiveProps extends VirtualTree.Props {
-  width: number;
-  height: number;
-
-  leftBottom: Point;
+interface TrianglePrimitiveProps extends VirtualTree.Props {
+  first: Point;
+  second: Point;
+  third: Point;
 
   fillColor?: string | CanvasGradient | CanvasPattern;
   strokeColor?: string | CanvasGradient | CanvasPattern;
 }
 
-export default class RectanglePrimitive extends Component<RectanglePrimitiveProps> {
-  // public applyProps(props: RectanglePrimitiveProps): void {
+export default class TrianglePrimitive extends Component<TrianglePrimitiveProps> {
+  // public applyProps(props: TrianglePrimitiveProps): void {
   // }
 
   render(ctx: CanvasRenderingContext2D) {
     const {
-      width, height, leftBottom, fillColor, strokeColor,
+      first, second, third, fillColor, strokeColor,
     } = this.props;
     ctx.save();
 
     ctx.beginPath();
 
-    ctx.rect(leftBottom.x, ctx.canvas.height - (height + leftBottom.y), width, height);
+    ctx.moveTo(first.x, ctx.canvas.height - first.y);
+    ctx.lineTo(second.x, ctx.canvas.height - second.y);
+    ctx.lineTo(third.x, ctx.canvas.height - third.y);
+
+    ctx.closePath();
 
     if (strokeColor != null) {
       ctx.strokeStyle = strokeColor;

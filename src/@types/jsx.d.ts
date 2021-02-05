@@ -5,9 +5,17 @@ declare namespace VirtualTree {
   // eslint-disable-next-line no-use-before-define
   type Element = Component | RenderType;
 
+  interface ElementMeta {
+    // eslint-disable-next-line no-use-before-define
+    Factory: ComponentConstructor;
+    props: Record<string, any>;
+    key?: string;
+  }
+
   interface Props {
     id?: string;
     children?: Element[] | Element;
+    key?: string;
   }
 
   abstract class TreeNode {
@@ -33,7 +41,15 @@ declare namespace VirtualTree {
 
     applyProps(props: TProps): void;
 
-    render(ctx: CanvasRenderingContext2D): Element;
+    render(ctx: CanvasRenderingContext2D): ElementMeta | RenderType;
+  }
+
+  interface ComponentConstructor<TProps extends Props = Props> {
+    create<
+      GProps extends Props = Props,
+      >(props: GProps): Component<GProps>;
+
+    new(): Component<TProps>;
   }
 
   interface FunctionalComponent<TProps extends Props = Props> {
@@ -42,7 +58,7 @@ declare namespace VirtualTree {
 }
 
 declare namespace JSX {
-  type Element = VirtualTree.Element;
+  type Element = VirtualTree.ElementMeta | VirtualTree.RenderType;
   type ElementClass = VirtualTree.Component;
   interface ElementAttributesProperty { props: Props; }
   interface ElementChildrenAttribute { children: JSX.Element[] | JSX.Element; }

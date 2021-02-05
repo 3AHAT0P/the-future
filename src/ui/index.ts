@@ -1,4 +1,5 @@
 import { Component } from 'VirtualTree';
+
 import App from './app';
 
 import './styles/index.scss';
@@ -13,7 +14,8 @@ const render = (rootElementOrSelector: HTMLCanvasElement | string, Tree: typeof 
   rootElement.setAttribute('width', rootElement.clientWidth.toString());
   rootElement.setAttribute('height', rootElement.clientHeight.toString());
   const tree = Tree.create({ canvas: rootElement });
-  tree._render();
+  tree._mount();
+  setInterval(() => tree._update(), 1000 / 30);
 };
 
 render('#root', App);
