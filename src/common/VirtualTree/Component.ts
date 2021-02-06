@@ -30,7 +30,9 @@ export default class Component<TProps extends VirtualTree.Props = VirtualTree.Pr
   }
 
   public handleClick(event: MouseEvent) {
-    // noop
+    for (const child of this._children) {
+      child.handleClick(event);
+    }
   }
 
   public _mount(ctx: CanvasRenderingContext2D): void {
@@ -49,9 +51,11 @@ export default class Component<TProps extends VirtualTree.Props = VirtualTree.Pr
 
     if (Array.isArray(renderResult)) {
       for (const meta of renderResult) {
-        const child = meta.Factory.create(meta.props) as unknown as this;
-        this.addChild(child);
-        child._mount(ctx);
+        if (meta instanceof Object && 'Factory' in meta) {
+          const child = meta.Factory.create(meta.props) as unknown as this;
+          this.addChild(child);
+          child._mount(ctx);
+        }
       }
       return;
     }
@@ -83,6 +87,12 @@ export default class Component<TProps extends VirtualTree.Props = VirtualTree.Pr
         const meta = renderResult[index];
         const _child = this._children[index];
 
+        if (!(meta instanceof Object && 'Factory' in meta)) {
+          if (_child != null) this.removeChild(_child);
+          // eslint-disable-next-line no-continue
+          continue;
+        }
+
         if (_child != null) {
           if (_child instanceof meta.Factory) {
             _child.applyProps(meta.props as unknown as TProps);
@@ -109,7 +119,7 @@ export default class Component<TProps extends VirtualTree.Props = VirtualTree.Pr
     ctx.drawImage(renderResult as CanvasImageSource, 0, 0);
   }
 
-  public render(ctx: CanvasRenderingContext2D): VirtualTree.ElementMeta | VirtualTree.RenderType {
+  public render(ctx: CanvasRenderingContext2D): VirtualTree.ElementMeta | VirtualTree.ElementMeta[] | VirtualTree.RenderType {
   // noop
   }
 }

@@ -1,5 +1,5 @@
 import { Component } from 'VirtualTree';
-import { CirclePrimitive, RectanglePrimitive, RoundedLinePrimitive } from '../components/primitives';
+import { TextPrimitive } from '../components/primitives';
 import Bird from '../components/Bird';
 import Nest from '../components/Nest';
 
@@ -7,6 +7,13 @@ export default class HomeScreen extends Component {
   private _birdPosition: Point = { x: 100, y: 100 };
 
   private _rotationAngle = 0;
+
+  private _isVisibleBirdVoice = false;
+
+  private _showWhatBirdSay() {
+    this._isVisibleBirdVoice = true;
+    setTimeout(() => { this._isVisibleBirdVoice = false; }, 5 * 1000);
+  }
 
   public render(ctx: CanvasRenderingContext2D) {
     if (
@@ -24,8 +31,19 @@ export default class HomeScreen extends Component {
     } else this._birdPosition.y += this._rotationAngle % 360 < 180 ? 5 : -5;
 
     return <>
-      <Bird position={this._birdPosition} rotationAngle={this._rotationAngle} />
+      <Bird
+        position={this._birdPosition}
+        rotationAngle={this._rotationAngle}
+        onClick={() => { this._showWhatBirdSay(); }}
+      />
       <Nest position={{ x: 500, y: 500 }} diameter={200} />
+      {this._isVisibleBirdVoice
+        && <TextPrimitive
+            position={{ x: 500, y: ctx.canvas.height - 100 }}
+            text="Ptee Ptee"
+            fillColor='hsla(200, 50%, 50%, 1)'
+          />
+      }
     </>;
   }
 }

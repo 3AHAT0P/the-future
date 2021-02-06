@@ -12,6 +12,7 @@ interface TrianglePoints {
 interface BirdProps extends VirtualTree.Props {
   position: Point;
   rotationAngle: number;
+  onClick?: () => void;
 }
 
 export default class Bird extends Component<BirdProps> {
@@ -66,6 +67,20 @@ export default class Bird extends Component<BirdProps> {
         },
       ],
     };
+  }
+
+  public handleClick(event: MouseEvent) {
+    super.handleClick(event);
+
+    const { height } = event.target as HTMLCanvasElement;
+
+    if (event.offsetX >= this.props.position.x && event.offsetX <= (this.props.position.x + this._canvas.width)
+      && event.offsetY >= (height - (this._canvas.height + this.props.position.y))
+      && event.offsetY <= (height - this.props.position.y)
+    ) {
+      console.log('Ptee-Ptee');
+      if (this.props.onClick != null && this.props.onClick instanceof Function) this.props.onClick();
+    }
   }
 
   public _mount() {
