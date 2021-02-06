@@ -18,38 +18,18 @@ export default class Component<TProps extends VirtualTree.Props = VirtualTree.Pr
     if (props.id != null) this._id = props.id;
     if (props.children != null) {
       console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', this, props.children);
+      debugger;
       // if (Array.isArray(props.children)) {
       //   props.children.forEach((child: this) => this.addChild(child));
       // }
     }
   }
 
-  // public _mount(ctx: CanvasRenderingContext2D): void {
-  //   const renderResult = this.render(ctx);
-
-  //   if (renderResult == null) return;
-
-  //   if (renderResult instanceof Component) {
-  //     renderResult._mount(ctx);
-  //     return;
-  //   }
-
-  //   // Logic for work with Fragment.
-  //   if (Array.isArray(renderResult)) {
-  //     for (const child of renderResult) {
-  //       this.addChild(child);
-  //       if (child instanceof Component) child._mount(ctx);
-  //       // TODO: ??????
-  //       else ctx.drawImage(child as CanvasImageSource, 0, 0);
-  //     }
-  //     return;
-  //   }
-
-  //   // TODO: ??????
-  //   ctx.drawImage(renderResult as CanvasImageSource, 0, 0);
-  // }
-
   public beforeMount(): void {
+    // noop
+  }
+
+  public handleClick(event: MouseEvent) {
     // noop
   }
 
@@ -103,13 +83,19 @@ export default class Component<TProps extends VirtualTree.Props = VirtualTree.Pr
         const meta = renderResult[index];
         const _child = this._children[index];
 
-        if (_child != null && _child instanceof meta.Factory) {
-          _child.applyProps(meta.props as unknown as TProps);
-          _child._update(ctx);
+        if (_child != null) {
+          if (_child instanceof meta.Factory) {
+            _child.applyProps(meta.props as unknown as TProps);
+            _child._update(ctx);
+          } else {
+            const child = meta.Factory.create(meta.props) as unknown as this;
+            this.addChildAfter(_child, child);
+            this.removeChild(_child);
+            child._mount(ctx);
+          }
         } else {
           const child = meta.Factory.create(meta.props) as unknown as this;
-          this.addChildAfter(_child, child);
-          this.removeChild(_child);
+          this.addChild(child);
           child._mount(ctx);
         }
       }

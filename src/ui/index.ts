@@ -15,6 +15,7 @@ const render = (rootElementOrSelector: HTMLCanvasElement | string, Tree: typeof 
   rootElement.setAttribute('height', rootElement.clientHeight.toString());
   const tree = Tree.create({ canvas: rootElement });
   tree._mount();
+  rootElement.addEventListener('click', (event: MouseEvent) => tree.handleClick(event));
   setInterval(() => tree._update(), 1000 / 30);
 };
 

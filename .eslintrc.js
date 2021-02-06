@@ -45,5 +45,6 @@ module.exports = {
     '@typescript-eslint/semi': ['error'],
     'class-methods-use-this': ['off'],
     'no-void': ['off'],
+    'import/prefer-default-export': ['off'],
   },
 };

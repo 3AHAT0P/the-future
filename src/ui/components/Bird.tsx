@@ -29,7 +29,14 @@ export default class Bird extends Component<BirdProps> {
 
   private _beakHeight = 15;
 
+  private _wingFlapCycleIndex = 0;
+
+  private _wingFlapCycle = [1, 2, 4, 2, 1];
+
   private _buildPartsPosition(bodyPosition: Point) {
+    const wingSizeMod = 1 / this._wingFlapCycle[this._wingFlapCycleIndex];
+    this._wingFlapCycleIndex += 1;
+    if (this._wingFlapCycleIndex >= this._wingFlapCycle.length) this._wingFlapCycleIndex = 0;
     return {
       beak: {
         first: { x: bodyPosition.x + this._bodyWidth / 2 - 10, y: bodyPosition.y + this._bodyHeight },
@@ -50,12 +57,12 @@ export default class Bird extends Component<BirdProps> {
         {
           first: { x: bodyPosition.x, y: bodyPosition.y + 70 },
           second: { x: bodyPosition.x, y: bodyPosition.y + 30 },
-          third: { x: bodyPosition.x - this._wingWidth, y: bodyPosition.y + 55 },
+          third: { x: bodyPosition.x - this._wingWidth * wingSizeMod, y: bodyPosition.y + 55 },
         },
         {
           first: { x: bodyPosition.x + this._bodyWidth, y: bodyPosition.y + 70 },
           second: { x: bodyPosition.x + this._bodyWidth, y: bodyPosition.y + 30 },
-          third: { x: bodyPosition.x + this._bodyWidth + this._wingWidth, y: bodyPosition.y + 55 },
+          third: { x: bodyPosition.x + this._bodyWidth + this._wingWidth * wingSizeMod, y: bodyPosition.y + 55 },
         },
       ],
     };
