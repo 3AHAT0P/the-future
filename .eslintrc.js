@@ -46,5 +46,7 @@ module.exports = {
     'class-methods-use-this': ['off'],
     'no-void': ['off'],
     'import/prefer-default-export': ['off'],
+    '@typescript-eslint/ban-ts-comment': ['warn'],
+    'arrow-body-style': ['off'],
   },
 };

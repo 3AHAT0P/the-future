@@ -44,7 +44,10 @@ export default class TextPrimitive extends Component<TextPrimitiveProps> {
 
     const textMetrics = ctx.measureText(text);
 
-    const y = ctx.canvas.height - position.y - textMetrics.fontBoundingBoxAscent - textMetrics.fontBoundingBoxDescent;
+    // const lineHeight = textMetrics.fontBoundingBoxAscent + textMetrics.fontBoundingBoxDescent;
+    const lineHeight = textMetrics.fontBoundingBoxAscent;
+
+    const y = position.y + lineHeight;
 
     if (strokeColor != null) {
       ctx.strokeStyle = strokeColor;

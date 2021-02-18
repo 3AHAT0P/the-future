@@ -12,10 +12,13 @@ declare namespace VirtualTree {
     key?: string;
   }
 
+  type ComponentAlign = 'TopLeft' | 'BottomLeft' | 'BottomRight' | 'TopRight';
+
   interface Props {
     id?: string;
     children?: Element[] | Element;
     key?: string;
+    align?: ComponentAlign;
   }
 
   abstract class TreeNode {

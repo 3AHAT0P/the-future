@@ -1,33 +1,45 @@
 import { Component } from 'VirtualTree';
+import { getRandomArbitrary, getRandomIntInclusive, floorNumber } from '@/common/utils/math';
+import { withIndividualContext, PositionProps } from '@/ui/mixins/withIndividualCanvas';
+
 import { RoundedLinePrimitive } from './primitives';
 
-function getRandomArbitrary(min: number, max: number) {
-  return Math.random() * (max - min) + min;
-}
+const get = <T extends unknown = unknown>(target: T, key: string): unknown => {
+  if (target == null) return target;
 
-function floorNumber(value: number, precision: number) {
-  return Math.floor(value * 10 ** precision) / 10 ** precision;
-}
+  const path = key.split('.');
+  let value: any = target;
+  for (const part of path) {
+    value = value[part];
+    if (value == null) return value;
+  }
 
-function getRandomIntInclusive<T extends number>(min: number, max: number): T {
-  return Math.floor(Math.random() * (max - min + 1)) + min as T;
-}
+  return value;
+};
 
-interface NestProps extends VirtualTree.Props {
-  position: Point;
+interface _NestProps extends VirtualTree.Props {
   diameter: number;
 }
 
-export default class Nest extends Component<NestProps> {
-  private _canvas: HTMLCanvasElement = document.createElement('canvas');
+interface NestProps extends _NestProps, PositionProps {
+  diameter: number;
+}
 
-  private _ctx = this._canvas.getContext('2d');
-
+// @ts-ignore: Конструкторы базового класса должны иметь одинаковые типы возвращаемых значений.ts(2510)
+export default class Nest extends withIndividualContext(Component)<_NestProps> {
   private _branchesInTheNest: JSX.Element[] = [];
 
-  private _isDirty = true;
-
   private _oldProps: NestProps | null = null;
+
+  protected _needUseCache = true;
+
+  protected get canvasSize(): Size {
+    return { width: this.props.diameter * 1.5, height: this.props.diameter * 1.5 };
+  }
+
+  protected get _checkProps(): string[] {
+    return ['diameter', 'position.x', 'position.y'];
+  }
 
   private _buildCoordsForNest(length: number, start: Point, radius: number, quarter: 1 | 2 | 3 | 4) {
     const saturation = getRandomIntInclusive(10, 90);
@@ -61,43 +73,17 @@ export default class Nest extends Component<NestProps> {
   }
 
   public applyProps(props: NestProps): void {
-    this._shouldRerender(this.props, props);
+    if (!this._propsAreEqual(this.props, props)) this._isDirty = true;
     this._oldProps = this.props;
     super.applyProps(props);
   }
 
-  private _shouldRerender(oldProps: NestProps, newProps: NestProps) {
-    if (
-      oldProps.diameter !== newProps.diameter
-      || oldProps.position.x !== newProps.position.x
-      || oldProps.position.y !== newProps.position.y
-    ) this._isDirty = true;
-  }
-
-  public _mount() {
-    if (this._ctx == null) throw new Error('Context is incorrect!');
-
-    super._mount(this._ctx);
-
-    this._isDirty = false;
-  }
-
-  public _update(ctx: CanvasRenderingContext2D) {
-    if (this._ctx == null) throw new Error('Context is incorrect!');
-
-    if (this._isDirty) {
-      this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
-
-      super._update(this._ctx);
-
-      this._isDirty = false;
+  private _propsAreEqual(oldProps: NestProps, newProps: NestProps) {
+    for (const key of this._checkProps) {
+      if (get(oldProps, key) !== get(newProps, key)) return false;
     }
 
-    ctx.drawImage(
-      this._canvas,
-      this.props.position.x,
-      ctx.canvas.height - (this._canvas.height + this.props.position.y),
-    );
+    return true;
   }
 
   public buildBranches(): void {
@@ -105,9 +91,6 @@ export default class Nest extends Component<NestProps> {
 
     const x = diameter / 2;
     const y = diameter / 2;
-
-    this._canvas.width = diameter * 1.5;
-    this._canvas.height = diameter * 1.5;
 
     const innerMaxX = x + diameter / 10;
     const innerMaxY = y + diameter / 10;
@@ -159,7 +142,6 @@ export default class Nest extends Component<NestProps> {
       const quarer: 1 | 2 | 3 | 4 = getRandomIntInclusive(1, 4);
       let position;
 
-      // eslint-disable-next-line max-len
       if (quarer === 1) {
         position = { x: getRandomIntInclusive(innerMinX, innerMaxX), y: getRandomIntInclusive(innerMinY, innerMaxY) };
       } else if (quarer === 2) {
@@ -178,9 +160,18 @@ export default class Nest extends Component<NestProps> {
     }
   }
 
+  private get _diameterPropDidChanged() {
+    if (this._oldProps == null) return true;
+    if (this._oldProps.diameter !== this.props.diameter) return true;
+
+    return false;
+  }
+
   public render() {
-    if (this._oldProps == null) this.buildBranches();
-    if (this._oldProps != null && this._oldProps.diameter !== this.props.diameter) this.buildBranches();
+    if (this._diameterPropDidChanged) {
+      this._updateCanvasSize();
+      this.buildBranches();
+    }
     return (
       <>
         {this._branchesInTheNest}

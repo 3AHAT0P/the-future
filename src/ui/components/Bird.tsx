@@ -1,4 +1,7 @@
+// eslint-disable-next-line max-classes-per-file
 import { Component } from 'VirtualTree';
+import { withIndividualContext } from '@/ui/mixins/withIndividualCanvas';
+
 import RectanglePrimitive from './primitives/Rectangle';
 import CirclePrimitive from './primitives/Circle';
 import TrianglePrimitive from './primitives/Triangle';
@@ -10,16 +13,12 @@ interface TrianglePoints {
 }
 
 interface BirdProps extends VirtualTree.Props {
-  position: Point;
   rotationAngle: number;
   onClick?: () => void;
 }
 
-export default class Bird extends Component<BirdProps> {
-  private _canvas: HTMLCanvasElement = document.createElement('canvas');
-
-  private _ctx = this._canvas.getContext('2d');
-
+// @ts-ignore: Конструкторы базового класса должны иметь одинаковые типы возвращаемых значений.ts(2510)
+export default class Bird extends withIndividualContext(Component)<BirdProps> {
   private _bodyWidth = 40;
 
   private _bodyHeight = 100;
@@ -33,6 +32,11 @@ export default class Bird extends Component<BirdProps> {
   private _wingFlapCycleIndex = 0;
 
   private _wingFlapCycle = [1, 2, 4, 2, 1];
+
+  protected get canvasSize(): Size {
+    const maxSize = Math.max(this._wingWidth * 2 + this._bodyWidth, this._beakHeight + this._bodyHeight);
+    return { width: maxSize, height: maxSize };
+  }
 
   private _buildPartsPosition(bodyPosition: Point) {
     const wingSizeMod = 1 / this._wingFlapCycle[this._wingFlapCycleIndex];
@@ -72,68 +76,30 @@ export default class Bird extends Component<BirdProps> {
   public handleClick(event: MouseEvent) {
     super.handleClick(event);
 
-    const { height } = event.target as HTMLCanvasElement;
+    // const { height } = event.target as HTMLCanvasElement;
 
     if (event.offsetX >= this.props.position.x && event.offsetX <= (this.props.position.x + this._canvas.width)
-      && event.offsetY >= (height - (this._canvas.height + this.props.position.y))
-      && event.offsetY <= (height - this.props.position.y)
+      && event.offsetY >= this.props.position.y
+      && event.offsetY <= (this.props.position.y + this._canvas.height)
     ) {
       console.log('Ptee-Ptee');
       if (this.props.onClick != null && this.props.onClick instanceof Function) this.props.onClick();
     }
   }
 
-  public _mount() {
-    if (this._ctx == null) throw new Error('Context is incorrect!');
-
-    super._mount(this._ctx);
-  }
-
   public _update(ctx: CanvasRenderingContext2D) {
     if (this._ctx == null) throw new Error('Context is incorrect!');
 
-    this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
-
-    // if (this.props.needRotate) {
-
-    // }
     this._ctx.translate(this._canvas.width / 2, this._canvas.height / 2);
     this._ctx.rotate(this.props.rotationAngle * (Math.PI / 180));
     this._ctx.translate(-this._canvas.width / 2, -this._canvas.height / 2);
 
-    super._update(this._ctx);
+    super._update(ctx);
 
     this._ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-    ctx.drawImage(
-      this._canvas,
-      this.props.position.x,
-      ctx.canvas.height - (this._canvas.height + this.props.position.y),
-    );
-
-    // DEBUG MODE ONLY
-
-    // ctx.strokeRect(
-    //   this.props.position.x, ctx.canvas.height - (this._canvas.height + this.props.position.y),
-    //   this._canvas.width, this._canvas.height,
-    // );
-
-    // ctx.fillRect(
-    //   this.props.position.x + this._canvas.width / 2,
-    //   ctx.canvas.height - (this._canvas.height + this.props.position.y) + this._canvas.height / 2,
-    //   2, 2,
-    // );
-  }
-
-  public beforeMount(): void {
-    const maxSize = Math.max(this._wingWidth * 2 + this._bodyWidth, this._beakHeight + this._bodyHeight);
-    this._canvas.width = maxSize;
-    this._canvas.height = maxSize;
   }
 
   public render() {
-    // const { position } = this.props;
-
     const position = {
       x: this._wingWidth,
       y: (this._canvas.height - (this._beakHeight + this._bodyHeight)) / 2,
@@ -146,7 +112,7 @@ export default class Bird extends Component<BirdProps> {
         <RectanglePrimitive
           width={this._bodyWidth}
           height={this._bodyHeight}
-          leftBottom={position}
+          position={position}
           strokeColor='hsla(0, 50%, 50%, 1)'
         />
         {eyes.map((center: Point) => (

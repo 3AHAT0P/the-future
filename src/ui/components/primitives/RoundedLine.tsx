@@ -20,9 +20,9 @@ export default class RoundedLinePrimitive extends Component<RoundedLinePrimitive
 
     ctx.beginPath();
 
-    ctx.moveTo(start.x, ctx.canvas.height - start.y);
-    ctx.arcTo(middle.x, ctx.canvas.height - middle.y, end.x, ctx.canvas.height - end.y, radius);
-    ctx.lineTo(end.x, ctx.canvas.height - end.y);
+    ctx.moveTo(start.x, start.y);
+    ctx.arcTo(middle.x, middle.y, end.x, end.y, radius);
+    ctx.lineTo(end.x, end.y);
 
     if (strokeColor != null) {
       ctx.strokeStyle = strokeColor;

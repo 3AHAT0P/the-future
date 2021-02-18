@@ -21,9 +21,9 @@ export default class TrianglePrimitive extends Component<TrianglePrimitiveProps>
 
     ctx.beginPath();
 
-    ctx.moveTo(first.x, ctx.canvas.height - first.y);
-    ctx.lineTo(second.x, ctx.canvas.height - second.y);
-    ctx.lineTo(third.x, ctx.canvas.height - third.y);
+    ctx.moveTo(first.x, first.y);
+    ctx.lineTo(second.x, second.y);
+    ctx.lineTo(third.x, third.y);
 
     ctx.closePath();
 

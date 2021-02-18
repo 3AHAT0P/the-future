@@ -9,6 +9,8 @@ export default class Component<TProps extends VirtualTree.Props = VirtualTree.Pr
     return instance;
   }
 
+  protected _align: VirtualTree.ComponentAlign = 'TopLeft';
+
   private _props: TProps = {} as TProps;
 
   public get props() { return this._props; }
@@ -16,6 +18,7 @@ export default class Component<TProps extends VirtualTree.Props = VirtualTree.Pr
   public applyProps(props: TProps): void {
     this._props = props;
     if (props.id != null) this._id = props.id;
+    if (props.align != null) this._align = props.align;
     if (props.children != null) {
       console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', this, props.children);
       debugger;

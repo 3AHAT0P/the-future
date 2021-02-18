@@ -4,7 +4,7 @@ interface RectanglePrimitiveProps extends VirtualTree.Props {
   width: number;
   height: number;
 
-  leftBottom: Point;
+  position: Point;
 
   fillColor?: string | CanvasGradient | CanvasPattern;
   strokeColor?: string | CanvasGradient | CanvasPattern;
@@ -16,13 +16,13 @@ export default class RectanglePrimitive extends Component<RectanglePrimitiveProp
 
   render(ctx: CanvasRenderingContext2D) {
     const {
-      width, height, leftBottom, fillColor, strokeColor,
+      width, height, position, fillColor, strokeColor,
     } = this.props;
     ctx.save();
 
     ctx.beginPath();
 
-    ctx.rect(leftBottom.x, ctx.canvas.height - (height + leftBottom.y), width, height);
+    ctx.rect(position.x, position.y, width, height);
 
     if (strokeColor != null) {
       ctx.strokeStyle = strokeColor;

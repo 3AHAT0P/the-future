@@ -20,7 +20,7 @@ export default class CirclePrimitive extends Component<CirclePrimitiveProps> {
     ctx.save();
 
     ctx.beginPath();
-    ctx.arc(center.x, ctx.canvas.height - center.y, radius, 0, 2 * Math.PI);
+    ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
 
     if (strokeColor != null) {
       ctx.strokeStyle = strokeColor;

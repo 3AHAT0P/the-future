@@ -8,6 +8,11 @@ declare global {
     x: number; // number of pixels from the left side
     y: number; // number of pixels from the bottom side
   }
+
+  interface Size {
+    width: number;
+    height: number;
+  }
 }
 
 export { };
