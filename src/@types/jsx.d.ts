@@ -16,7 +16,8 @@ declare namespace VirtualTree {
 
   interface Props {
     id?: string;
-    children?: Element[] | Element;
+    // eslint-disable-next-line no-use-before-define
+    children?: JSX.Element | JSX.Element[];
     key?: string;
     align?: ComponentAlign;
   }
@@ -44,7 +45,8 @@ declare namespace VirtualTree {
 
     applyProps(props: TProps): void;
 
-    render(ctx: CanvasRenderingContext2D): ElementMeta | RenderType;
+    // eslint-disable-next-line no-use-before-define
+    render(ctx: CanvasRenderingContext2D): JSX.Element | JSX.Element[];
   }
 
   interface ComponentConstructor<TProps extends Props = Props> {
@@ -64,7 +66,7 @@ declare namespace JSX {
   type Element = VirtualTree.ElementMeta | VirtualTree.RenderType;
   type ElementClass = VirtualTree.Component;
   interface ElementAttributesProperty { props: Props; }
-  interface ElementChildrenAttribute { children: JSX.Element[] | JSX.Element; }
+  interface ElementChildrenAttribute { children: JSX.ElementClass[] | JSX.ElementClass; }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface IntrinsicElements { }

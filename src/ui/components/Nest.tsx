@@ -1,6 +1,7 @@
+/* eslint-disable max-classes-per-file */
 import { Component } from 'VirtualTree';
 import { getRandomArbitrary, getRandomIntInclusive, floorNumber } from '@/common/utils/math';
-import { withIndividualContext, PositionProps } from '@/ui/mixins/withIndividualCanvas';
+import { withIndividualContext, PositionProps, IndividualCanvasHOC } from '@/ui/mixins/withIndividualCanvas';
 
 import { RoundedLinePrimitive } from './primitives';
 
@@ -17,16 +18,14 @@ const get = <T extends unknown = unknown>(target: T, key: string): unknown => {
   return value;
 };
 
-interface _NestProps extends VirtualTree.Props {
+interface NestProps extends VirtualTree.Props {
   diameter: number;
+
+  needCanvasUpdate?(size: Size): void;
+  setIsDirty?(): void;
 }
 
-interface NestProps extends _NestProps, PositionProps {
-  diameter: number;
-}
-
-// @ts-ignore: Конструкторы базового класса должны иметь одинаковые типы возвращаемых значений.ts(2510)
-export default class Nest extends withIndividualContext(Component)<_NestProps> {
+export class _Nest extends Component<NestProps> {
   private _branchesInTheNest: JSX.Element[] = [];
 
   private _oldProps: NestProps | null = null;
@@ -73,7 +72,9 @@ export default class Nest extends withIndividualContext(Component)<_NestProps> {
   }
 
   public applyProps(props: NestProps): void {
-    if (!this._propsAreEqual(this.props, props)) this._isDirty = true;
+    if (!this._propsAreEqual(this.props, props)) {
+      if (typeof this.props.setIsDirty === 'function') this.props.setIsDirty();
+    }
     this._oldProps = this.props;
     super.applyProps(props);
   }
@@ -169,7 +170,7 @@ export default class Nest extends withIndividualContext(Component)<_NestProps> {
 
   public render() {
     if (this._diameterPropDidChanged) {
-      this._updateCanvasSize();
+      if (typeof this.props.needCanvasUpdate === 'function') this.props.needCanvasUpdate(this.canvasSize);
       this.buildBranches();
     }
     return (
@@ -179,3 +180,30 @@ export default class Nest extends withIndividualContext(Component)<_NestProps> {
     );
   }
 }
+
+export default class Nest extends Component<NestProps & PositionProps> {
+  render() {
+    return (
+      <IndividualCanvasHOC position={this.props.position}>
+        <_Nest {...this.props} />
+      </IndividualCanvasHOC>
+    );
+  }
+}
+
+const IndividualCanvasHOCFunction = <
+  TProps extends VirtualTree.Props,
+  TComponent extends typeof Component,
+  >(ChildComponent: TComponent) => {
+  return class extends Component<TProps & PositionProps> {
+    render() {
+      return (
+        <IndividualCanvasHOC position={this.props.position}>
+          <ChildComponent {...this.props} />
+        </IndividualCanvasHOC>
+      );
+    }
+  };
+};
+
+const x = IndividualCanvasHOCFunction<NestProps, typeof _Nest>(_Nest);

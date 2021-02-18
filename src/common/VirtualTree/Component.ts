@@ -20,8 +20,8 @@ export default class Component<TProps extends VirtualTree.Props = VirtualTree.Pr
     if (props.id != null) this._id = props.id;
     if (props.align != null) this._align = props.align;
     if (props.children != null) {
-      console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', this, props.children);
-      debugger;
+      // console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', this, props.children);
+      // debugger;
       // if (Array.isArray(props.children)) {
       //   props.children.forEach((child: this) => this.addChild(child));
       // }
@@ -63,7 +63,7 @@ export default class Component<TProps extends VirtualTree.Props = VirtualTree.Pr
       return;
     }
 
-    // TODO: ??????
+    // TODO: ?????? это вообще тут нужно?
     ctx.drawImage(renderResult as CanvasImageSource, 0, 0);
   }
 
@@ -122,7 +122,7 @@ export default class Component<TProps extends VirtualTree.Props = VirtualTree.Pr
     ctx.drawImage(renderResult as CanvasImageSource, 0, 0);
   }
 
-  public render(ctx: CanvasRenderingContext2D): VirtualTree.ElementMeta | VirtualTree.ElementMeta[] | VirtualTree.RenderType {
+  public render(ctx: CanvasRenderingContext2D): JSX.Element | JSX.Element[] {
   // noop
   }
 }
