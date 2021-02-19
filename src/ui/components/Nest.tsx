@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { Component } from 'VirtualTree';
 import { getRandomArbitrary, getRandomIntInclusive, floorNumber } from '@/common/utils/math';
-import { withIndividualContext, PositionProps, IndividualCanvasHOC } from '@/ui/mixins/withIndividualCanvas';
+import { withIndividualCanvas } from '@/ui/mixins/withIndividualCanvas';
 
 import { RoundedLinePrimitive } from './primitives';
 
@@ -25,7 +25,7 @@ interface NestProps extends VirtualTree.Props {
   setIsDirty?(): void;
 }
 
-export class _Nest extends Component<NestProps> {
+export class Nest extends Component<NestProps> {
   private _branchesInTheNest: JSX.Element[] = [];
 
   private _oldProps: NestProps | null = null;
@@ -181,29 +181,4 @@ export class _Nest extends Component<NestProps> {
   }
 }
 
-export default class Nest extends Component<NestProps & PositionProps> {
-  render() {
-    return (
-      <IndividualCanvasHOC position={this.props.position}>
-        <_Nest {...this.props} />
-      </IndividualCanvasHOC>
-    );
-  }
-}
-
-const IndividualCanvasHOCFunction = <
-  TProps extends VirtualTree.Props,
-  TComponent extends typeof Component,
-  >(ChildComponent: TComponent) => {
-  return class extends Component<TProps & PositionProps> {
-    render() {
-      return (
-        <IndividualCanvasHOC position={this.props.position}>
-          <ChildComponent {...this.props} />
-        </IndividualCanvasHOC>
-      );
-    }
-  };
-};
-
-const x = IndividualCanvasHOCFunction<NestProps, typeof _Nest>(_Nest);
+export default withIndividualCanvas<NestProps, Nest>(Nest);

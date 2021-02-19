@@ -1,14 +1,6 @@
 import TreeNode from './TreeNode';
 
-export default class Component<TProps extends VirtualTree.Props = VirtualTree.Props> extends TreeNode {
-  public static create<
-    GProps extends VirtualTree.Props = VirtualTree.Props,
-    >(props: GProps) {
-    const instance = new this();
-    instance.applyProps(props);
-    return instance;
-  }
-
+class Component<TProps extends VirtualTree.Props = VirtualTree.Props> extends TreeNode {
   protected _align: VirtualTree.ComponentAlign = 'TopLeft';
 
   private _props: TProps = {} as TProps;
@@ -126,6 +118,29 @@ export default class Component<TProps extends VirtualTree.Props = VirtualTree.Pr
   // noop
   }
 }
+
+export interface ComponentConstructor<
+  TProps extends VirtualTree.Props = VirtualTree.Props,
+  TComponent extends Component<TProps> = Component<TProps>,
+> {
+  create(props: TProps): TComponent;
+
+  new(): TComponent;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-namespace
+namespace Component {
+  export function create<
+    TProps extends VirtualTree.Props = VirtualTree.Props,
+    TComponent extends Component<TProps> = Component<TProps>,
+  >(this: ComponentConstructor<TProps, TComponent>, props: TProps): TComponent {
+    const instance = new this();
+    instance.applyProps(props);
+    return instance;
+  }
+}
+
+export default Component;
 
 export const isComponentConstructor = (value: unknown): value is typeof Component => (
   // eslint-disable-next-line no-prototype-builtins

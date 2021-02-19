@@ -1,5 +1,6 @@
 /* eslint-disable max-classes-per-file */
-import { Component } from 'VirtualTree';
+import { Component, ComponentConstructor } from 'VirtualTree';
+import { addPropsToChildren } from '@/common/utils';
 
 export interface PositionProps {
   position: Point;
@@ -64,29 +65,7 @@ export const withIndividualContext = <TComponent extends typeof Component = type
   };
 };
 
-const isElementMeta = (value: unknown): value is VirtualTree.ElementMeta => (
-  typeof value === 'object' && value != null && 'Factory' in value
-);
-
-const addPropsToChildren = (children: JSX.Element | JSX.Element[], props: any): JSX.Element | JSX.Element[] => {
-  if (children == null) return children;
-
-  if (Array.isArray(children)) {
-    children.forEach((child) => {
-      if (isElementMeta(child)) {
-      // eslint-disable-next-line no-param-reassign
-        child.props = { ...child.props, ...props };
-      }
-    });
-  } else if (isElementMeta(children)) {
-    // eslint-disable-next-line no-param-reassign
-    children.props = { ...children.props, ...props };
-  }
-
-  return children;
-};
-
-export class IndividualCanvasHOC extends Component<VirtualTree.Props & PositionProps> {
+export default class IndividualCanvasComponent extends Component<VirtualTree.Props & PositionProps> {
   protected _canvas: HTMLCanvasElement = document.createElement('canvas');
 
   protected _ctx = this._canvas.getContext('2d');
@@ -155,3 +134,18 @@ export class IndividualCanvasHOC extends Component<VirtualTree.Props & PositionP
     );
   }
 }
+
+export const withIndividualCanvas = <
+  TProps extends VirtualTree.Props,
+  TComponent extends Component<TProps>,
+  >(ChildComponent: ComponentConstructor<TProps, TComponent>): ComponentConstructor<TProps & PositionProps> => {
+  return class extends Component<TProps & PositionProps> {
+    render() {
+      return (
+        <IndividualCanvasComponent position={this.props.position}>
+          <ChildComponent {...this.props} />
+        </IndividualCanvasComponent>
+      );
+    }
+  };
+};

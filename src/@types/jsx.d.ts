@@ -43,16 +43,20 @@ declare namespace VirtualTree {
 
     public get children(): Component[];
 
+    public props: TProps;
+
     applyProps(props: TProps): void;
 
     // eslint-disable-next-line no-use-before-define
     render(ctx: CanvasRenderingContext2D): JSX.Element | JSX.Element[];
   }
 
+  // interface ComponentConstructor<TProps extends Props> {
+  //   new(): Component<TProps>;
+  // }
+
   interface ComponentConstructor<TProps extends Props = Props> {
-    create<
-      GProps extends Props = Props,
-      >(props: GProps): Component<GProps>;
+    create(props: TProps): Component<TProps>;
 
     new(): Component<TProps>;
   }
